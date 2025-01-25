@@ -1,0 +1,20 @@
+{
+  "name": "nudgey",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "deploy": "node deploy-commands.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@notionhq/client": "^2.2.15",
+    "discord.js": "^14.17.3",
+    "dotenv": "^16.4.7",
+    "node-schedule": "^2.1.1"
+  }
+}
