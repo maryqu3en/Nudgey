@@ -93,11 +93,34 @@ module.exports = {
             };
         }
 
+        let discordIdFilter = {};
+        if (member) {
+            const memberResponse = await notion.databases.query({
+                database_id: process.env.NOTION_MEMBERS_DB_ID,
+                filter: {
+                    property: 'Discord ID',
+                    rich_text: {
+                        equals: member.id,
+                    },
+                },
+            });
+
+            if (memberResponse.results.length > 0) {
+                const memberPageId = memberResponse.results[0].id;
+                discordIdFilter = {
+                    property: 'Assigned To',
+                    relation: {
+                        contains: memberPageId,
+                    },
+                };
+            }
+        }
+
         const filter = {
             and: [
                 dateFilterConditions,
                 statusFilterConditions,
-                member ? { property: 'Assigned To', people: { contains: member.id } } : {}
+                discordIdFilter
             ].filter(condition => Object.keys(condition).length > 0)
         };
 
@@ -120,7 +143,7 @@ module.exports = {
                 const discordIdProperty = relatedPage.properties['Discord ID'];
                 const discordId = discordIdProperty && discordIdProperty.rich_text
                     ? discordIdProperty.rich_text[0].text.content
-                    : null; // Ensure the Discord ID exists
+                    : null;
                 return discordId ? `<@${discordId}>` : 'Unknown Member';
             }));
             return `**${name}** - Deadline: ${deadline} - Assigned to: ${assignedMembers.join(', ')}`;
